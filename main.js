@@ -21,17 +21,37 @@ $(document).ready(function() {
     let appleEaten = false;
 
     let applesEaten = 0;
+    let highScore = 0;
 
     let timerId = null;
 
-    function endGame() {
-        console.log("true");
+    let gameOver = false;
 
-        $( "#dialog1" ).dialog({
-            autoOpen: false
+    function endGame() {
+        if (applesEaten > highScore) {
+            highScore = applesEaten;
+        }
+
+        $( "#dialog p:eq(0)").text("Your score:" + applesEaten);
+        $( "#dialog p:eq(1)").text("Your high score:" + highScore);
+
+        $( "#dialog" ).dialog({
+            autoOpen: false,
+            buttons: {
+                Ok: function() {
+                  $( this ).dialog( "close" );
+                  newGame();
+                }
+            }
         });
 
-        $("#dialog1").dialog('open');
+        $("#dialog").dialog('open');
+    }
+
+    function eraseGameArea() {
+        for (let i = 0; i < gameLength; i++) {
+            $("tr").remove();
+        }
     }
 
     function drawGameArea() {
@@ -68,7 +88,7 @@ $(document).ready(function() {
             if (snakePos[i] == appleX && snakePos[i+1] == appleY) {
 
                 appleEaten = true;
-                applesEaten ++;
+                applesEaten++;
 
                 oldTailX = snakePos[0];
                 oldTailY = snakePos[1];
@@ -82,7 +102,7 @@ $(document).ready(function() {
         if (snakePos[snakePos.length - 2] == -1 || snakePos[snakePos.length - 2] == 30 || snakePos[snakePos.length - 1] == -1 || snakePos[snakePos.length - 1] == 30) {
             clearInterval(timerId);
             timerId = null;
-            console.log("wall");
+            gameOver = true;
             endGame();
         }
 
@@ -96,8 +116,8 @@ $(document).ready(function() {
             if (snakePos[snakePos.length - 2] == snakePos[i] && snakePos[snakePos.length - 1] == snakePos[i+1]) {
                 clearInterval(timerId);
                 timerId = null;
-                console.log("snake");
                 hit = true;
+                gameOver = true;
                 endGame();
             }
         }
@@ -159,41 +179,68 @@ $(document).ready(function() {
         aliveTest();
     }
 
-    drawGameArea();
+    function newGame() {
 
-    drawApple();
+        gameLength = 30;
+        speed = 100;
+        snakePos = [0,14,1,14,2,14];
+        oldHeadX = snakePos[snakePos.length - 2];
+        oldHeadY = snakePos[snakePos.length - 1];
+        oldTailX = snakePos[0];
+        oldTailY = snakePos[1];
+        appleX = parseInt(Math.random() * gameLength);
+        appleY = parseInt(Math.random() * gameLength);
+        currentDirection = "";
+        lastDirection = "";
+        appleEaten = false;
+        applesEaten = 0;
+        timerId = null;
+        gameOver = false;
 
-    oldHeadX = 0;
-    oldHeadY = 0;
+        eraseGameArea();
+        drawGameArea();
 
-    drawSnake();
+        drawApple();
 
-    oldHeadX = snakePos[snakePos.length - 2];
-    oldHeadY = snakePos[snakePos.length - 1];
+        snakePos = [0,14,1,14,2,14];
+
+        oldHeadX = 0;
+        oldHeadY = 0;
+
+        drawSnake();
+
+        oldHeadX = snakePos[snakePos.length - 2];
+        oldHeadY = snakePos[snakePos.length - 1];
+
+    }
+
+    newGame();
 
     document.addEventListener("keydown", function(event) {
-        if (event.key == "ArrowRight" && lastDirection != "left") {
-            currentDirection = "right";
-            clearInterval(timerId);
-            timerId = setInterval(updateSnakePos, speed);
-        }
+        if (gameOver == false) {
+            if (event.key == "ArrowRight" && lastDirection != "left") {
+                currentDirection = "right";
+                clearInterval(timerId);
+                timerId = setInterval(updateSnakePos, speed);
+            }
 
-        if (event.key == "ArrowLeft" && lastDirection != "right") {
-            currentDirection = "left";
-            clearInterval(timerId);
-            timerId = setInterval(updateSnakePos, speed);
-        }
+            if (event.key == "ArrowLeft" && lastDirection != "right") {
+                currentDirection = "left";
+                clearInterval(timerId);
+                timerId = setInterval(updateSnakePos, speed);
+            }
 
-        if (event.key == "ArrowUp" && lastDirection != "down") {
-            currentDirection = "up";
-            clearInterval(timerId);
-            timerId = setInterval(updateSnakePos, speed);
-        }
+            if (event.key == "ArrowUp" && lastDirection != "down") {
+                currentDirection = "up";
+                clearInterval(timerId);
+                timerId = setInterval(updateSnakePos, speed);
+            }
 
-        if (event.key == "ArrowDown" && lastDirection != "up") {
-            currentDirection = "down";
-            clearInterval(timerId);
-            timerId = setInterval(updateSnakePos, speed);
+            if (event.key == "ArrowDown" && lastDirection != "up") {
+                currentDirection = "down";
+                clearInterval(timerId);
+                timerId = setInterval(updateSnakePos, speed);
+            }
         }
     });
 
