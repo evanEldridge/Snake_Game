@@ -27,6 +27,19 @@ $(document).ready(function() {
 
     let gameOver = false;
 
+    function instructions() {
+        $( "#instructions" ).dialog({
+            autoOpen: false,
+            buttons: {
+                Ok: function() {
+                  $( this ).dialog( "close" );
+                }
+            }
+        });
+
+        $("#instructions").dialog('open');
+    }
+
     function endGame() {
         if (applesEaten > highScore) {
             highScore = applesEaten;
@@ -213,6 +226,8 @@ $(document).ready(function() {
         oldHeadY = snakePos[snakePos.length - 1];
 
     }
+
+    instructions();
 
     newGame();
 
