@@ -1,0 +1,12 @@
+#game_area {
+    width: 900px;
+    height: 900px;
+    background-color: rgb(36, 36, 36);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#game_area, td {
+    border: 1px solid rgb(187, 187, 187);
+    border-collapse: collapse;
+}
