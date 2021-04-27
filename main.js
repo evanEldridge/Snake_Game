@@ -45,10 +45,10 @@ $(document).ready(function() {
             highScore = applesEaten;
         }
 
-        $( "#dialog p:eq(0)").text("Your score:" + applesEaten);
-        $( "#dialog p:eq(1)").text("Your high score:" + highScore);
+        $( "#game_over p:eq(0)").text("Your score:" + applesEaten);
+        $( "#game_over p:eq(1)").text("Your high score:" + highScore);
 
-        $( "#dialog" ).dialog({
+        $( "#game_over" ).dialog({
             autoOpen: false,
             buttons: {
                 Ok: function() {
@@ -58,7 +58,7 @@ $(document).ready(function() {
             }
         });
 
-        $("#dialog").dialog('open');
+        $("#game_over").dialog('open');
     }
 
     function eraseGameArea() {
@@ -113,35 +113,36 @@ $(document).ready(function() {
 
     function hitWalls() {
         if (snakePos[snakePos.length - 2] == -1 || snakePos[snakePos.length - 2] == 30 || snakePos[snakePos.length - 1] == -1 || snakePos[snakePos.length - 1] == 30) {
+            return true;
+        }
+
+        else { return false; }
+    }
+
+    function hitSelf() {
+        for (let i = 0; i < snakePos.length - 3; i = i + 2) {
+            if (snakePos[snakePos.length - 2] == snakePos[i] && snakePos[snakePos.length - 1] == snakePos[i+1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function aliveTest() {
+        let test1 = hitWalls();
+        let test2 = hitSelf();
+
+        if (test1 == false && test2 == false) {
+            drawSnake();
+        }
+
+        else {
             clearInterval(timerId);
             timerId = null;
             gameOver = true;
             endGame();
         }
-
-        else { hitSelf(); }
-    }
-
-    function hitSelf() {
-        let hit = false;
-
-        for (let i = 0; i < snakePos.length - 3; i = i + 2) {
-            if (snakePos[snakePos.length - 2] == snakePos[i] && snakePos[snakePos.length - 1] == snakePos[i+1]) {
-                clearInterval(timerId);
-                timerId = null;
-                hit = true;
-                gameOver = true;
-                endGame();
-            }
-        }
-
-        if (hit == false) {
-            drawSnake();
-        }
-    }
-
-    function aliveTest() {
-        hitWalls();
     }
 
     function updateSnakePos() {
@@ -151,7 +152,6 @@ $(document).ready(function() {
         let tempX = 0;
         let tempY = 0;
 
-        //update lastDirection
         lastDirection = currentDirection;
 
         if (lastDirection == "right") {
@@ -194,11 +194,9 @@ $(document).ready(function() {
 
     function newGame() {
 
-        gameLength = 30;
-        speed = 100;
         snakePos = [0,14,1,14,2,14];
-        oldHeadX = snakePos[snakePos.length - 2];
-        oldHeadY = snakePos[snakePos.length - 1];
+        oldHeadX = 0;
+        oldHeadY = 0;
         oldTailX = snakePos[0];
         oldTailY = snakePos[1];
         appleX = parseInt(Math.random() * gameLength);
@@ -214,11 +212,6 @@ $(document).ready(function() {
         drawGameArea();
 
         drawApple();
-
-        snakePos = [0,14,1,14,2,14];
-
-        oldHeadX = 0;
-        oldHeadY = 0;
 
         drawSnake();
 
