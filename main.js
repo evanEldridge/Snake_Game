@@ -211,9 +211,10 @@ $(document).ready(function() {
         eraseGameArea();
         drawGameArea();
 
-        drawApple();
-
         drawSnake();
+
+        appleTest();
+        drawApple();
 
         oldHeadX = snakePos[snakePos.length - 2];
         oldHeadY = snakePos[snakePos.length - 1];
